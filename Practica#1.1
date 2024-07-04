@@ -1,0 +1,236 @@
+/*
+Fundacion Kinal 
+Centro educativo tecnico laboral Kinal 
+Quinto perito 
+Quinto electronica 
+Codigo Tecnico: EB5AV 
+Curso: Taller de electronica digital y reparacion de computadoras I 
+Proyecto: Uso de Sensor ultrasonico y Led Neopixel
+Dev: Luis Fernando Leiva Quezada 
+Fecha: 04 de julio
+*/
+
+#include <Adafruit_NeoPixel.h>
+
+#define A 2
+#define B 3
+#define C 4
+#define D 5
+#define E 6
+#define F 7
+#define G 8
+#define Trig 9
+#define Echo 10
+#define pin_Led 11
+#define ON(pin) digitalWrite(pin, HIGH)
+#define OFF(pin) digitalWrite(pin, LOW)
+
+Adafruit_NeoPixel anillo(12,pin_Led, NEO_GRB + NEO_KHZ800);
+
+float DURACION;
+float DISTANCIA;
+int Personas=0;
+
+enum colores
+{
+   rojo, 
+   verde
+};
+
+void setColor(int color);
+
+void setup() 
+{
+  Serial.begin(9600);
+  anillo.begin();
+  pinMode(Trig, OUTPUT);
+  pinMode(Echo, INPUT);
+  Color(verde);
+  Display(0);
+}
+
+void loop() 
+{
+  ultrasonico();
+  delay(700);
+  if(DISTANCIA>=6 && DISTANCIA<10)
+  {
+    Personas++;
+    Display(Personas);
+  }
+  delay(100);
+  if(Personas >= 10)
+  {
+    Color(rojo);
+  }
+  else
+  {
+    Color(verde);
+  }
+}
+
+void Display(int NumDisplay)
+{
+  switch(NumDisplay)
+  {
+    case(0):
+    {
+      ON(A);
+      ON(B);
+      ON(C);
+      ON(D);
+      ON(E);
+      ON(F);
+      OFF(G);
+      break;
+    }
+    case(1):
+    {
+      OFF(A);
+      ON(B);
+      ON(C);
+      OFF(D);
+      OFF(E);
+      OFF(F);
+      OFF(G);
+      break;
+    }
+    case(2):
+    {
+      ON(A);
+      ON(B);
+      OFF(C);
+      ON(D);
+      ON(E);
+      OFF(F);
+      ON(G);
+      break;
+    }
+    case(3):
+    {
+      ON(A);
+      ON(B);
+      ON(C);
+      ON(D);
+      OFF(E);
+      OFF(F);
+      ON(G);
+      break;
+    }
+    case(4):
+    {
+      OFF(A);
+      ON(B);
+      ON(C);
+      OFF(D);
+      OFF(E);
+      ON(F);
+      ON(G);
+      break;
+    }
+    case(5):
+    {
+      ON(A);
+      OFF(B);
+      ON(C);
+      ON(D);
+      OFF(E);
+      ON(F);
+      ON(G);
+      break;
+    }
+    case(6):
+    {
+      ON(A);
+      OFF(B);
+      ON(C);
+      ON(D);
+      ON(E);
+      ON(F);
+      ON(G);
+      break;
+    }
+    case(7):
+    {
+      ON(A);
+      ON(B);
+      ON(C);
+      OFF(D);
+      OFF(E);
+      OFF(F);
+      OFF(G);
+      break;
+    }
+    case(8):
+    {
+      ON(A);
+      ON(B);
+      ON(C);
+      ON(D);
+      ON(E);
+      ON(F);
+      ON(G);
+      break;
+    }
+    case(9):
+    {
+      ON(A);
+      ON(B);
+      ON(C);
+      OFF(D);
+      OFF(E);
+      ON(F);
+      ON(G);
+      break;
+    }
+    case(10):
+    {
+      OFF(A);
+      OFF(B);
+      OFF(C);
+      OFF(D);
+      OFF(E);
+      OFF(F);
+      ON(G);
+      break;
+    }
+  }
+}
+
+void ultrasonico()
+{
+  digitalWrite(Trig, HIGH);
+  delayMicroseconds(25);
+  digitalWrite(Trig, LOW);
+  DURACION = pulseIn(Echo, HIGH);
+  DISTANCIA = DURACION / 58.2;
+  Serial.println(DISTANCIA);
+  delay(200);
+}
+
+void Color(int color)
+{
+  switch(color)
+  {
+    case(rojo):
+    {
+        for(int i =0; i<25; i++)
+        {
+          anillo.setPixelColor(i,anillo.Color(255,0,0));
+          anillo.show();  //muestro el color en el led
+        } 
+      break;
+    }
+    
+    case(verde):
+    {
+        for(int i =0; i<25; i++)
+        {
+          anillo.setPixelColor(i,anillo.Color(124,252,0));
+          anillo.show();  //muestro el color en el led
+        }
+      break;
+    }
+  
+  }
+}
