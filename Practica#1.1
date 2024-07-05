@@ -79,14 +79,11 @@ void loop()
     Personas++;
     delay(500);
   } 
-  if(Personas == 10) 
-  {
-    Display(numbers[10]);
-    Personas++;
-  }
-  if(Personas >= 9)
+  if(Personas >= 10) 
   {
     Color(rojo);
+    Display(numbers[10]);
+    Personas++;
   }
   else
   {
@@ -136,6 +133,7 @@ void Color(int color)
         } 
       break;
     }
+    
     case(verde):
     {
         for(int i =0; i<25; i++)
@@ -145,5 +143,6 @@ void Color(int color)
         }
       break;
     }
+  
   }
 }
