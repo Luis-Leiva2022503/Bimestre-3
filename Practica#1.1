@@ -25,11 +25,30 @@ Fecha: 04 de julio
 #define ON(pin) digitalWrite(pin, HIGH)
 #define OFF(pin) digitalWrite(pin, LOW)
 
-Adafruit_NeoPixel anillo(12,pin_Led, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel anillo(25,pin_Led, NEO_GRB + NEO_KHZ800);
 
 float DURACION;
 float DISTANCIA;
 int Personas=0;
+
+// PGFEDCBA
+
+byte numbers[] = {
+  B00111111, // 0
+  B00000110, // 1
+  B01011011, // 2
+  B01001111, // 3
+  B01100110, // 4
+  B01101101, // 5
+  B01111101, // 6
+  B00000111, // 7
+  B01111111, // 8
+  B01101111, // 9
+  B01000000  // 10
+};
+
+const int segmentPins[] = {A,B,C,D,E,F,G};
+const int numSegments = 7;
 
 enum colores
 {
@@ -45,21 +64,27 @@ void setup()
   anillo.begin();
   pinMode(Trig, OUTPUT);
   pinMode(Echo, INPUT);
+  Config();
   Color(verde);
-  Display(0);
+  Display(numbers[0]);
 }
 
 void loop() 
 {
   ultrasonico();
   delay(700);
-  if(DISTANCIA>=6 && DISTANCIA<10)
+  if(DISTANCIA>=6 && DISTANCIA<=10 && Personas<10)
   {
+    Display(numbers[Personas]);
     Personas++;
-    Display(Personas);
+    delay(500);
+  } 
+  if(Personas == 10) 
+  {
+    Display(numbers[10]);
+    Personas++;
   }
-  delay(100);
-  if(Personas >= 10)
+  if(Personas >= 9)
   {
     Color(rojo);
   }
@@ -69,131 +94,21 @@ void loop()
   }
 }
 
-void Display(int NumDisplay)
+void Display(byte number) {
+  for (int i = 0; i < numSegments; i++) {
+    if (bitRead(number, i) == 1) {
+      digitalWrite(segmentPins[i], HIGH);
+    } else {
+      digitalWrite(segmentPins[i], LOW);
+    }
+  }
+}
+
+
+void Config()
 {
-  switch(NumDisplay)
-  {
-    case(0):
-    {
-      ON(A);
-      ON(B);
-      ON(C);
-      ON(D);
-      ON(E);
-      ON(F);
-      OFF(G);
-      break;
-    }
-    case(1):
-    {
-      OFF(A);
-      ON(B);
-      ON(C);
-      OFF(D);
-      OFF(E);
-      OFF(F);
-      OFF(G);
-      break;
-    }
-    case(2):
-    {
-      ON(A);
-      ON(B);
-      OFF(C);
-      ON(D);
-      ON(E);
-      OFF(F);
-      ON(G);
-      break;
-    }
-    case(3):
-    {
-      ON(A);
-      ON(B);
-      ON(C);
-      ON(D);
-      OFF(E);
-      OFF(F);
-      ON(G);
-      break;
-    }
-    case(4):
-    {
-      OFF(A);
-      ON(B);
-      ON(C);
-      OFF(D);
-      OFF(E);
-      ON(F);
-      ON(G);
-      break;
-    }
-    case(5):
-    {
-      ON(A);
-      OFF(B);
-      ON(C);
-      ON(D);
-      OFF(E);
-      ON(F);
-      ON(G);
-      break;
-    }
-    case(6):
-    {
-      ON(A);
-      OFF(B);
-      ON(C);
-      ON(D);
-      ON(E);
-      ON(F);
-      ON(G);
-      break;
-    }
-    case(7):
-    {
-      ON(A);
-      ON(B);
-      ON(C);
-      OFF(D);
-      OFF(E);
-      OFF(F);
-      OFF(G);
-      break;
-    }
-    case(8):
-    {
-      ON(A);
-      ON(B);
-      ON(C);
-      ON(D);
-      ON(E);
-      ON(F);
-      ON(G);
-      break;
-    }
-    case(9):
-    {
-      ON(A);
-      ON(B);
-      ON(C);
-      OFF(D);
-      OFF(E);
-      ON(F);
-      ON(G);
-      break;
-    }
-    case(10):
-    {
-      OFF(A);
-      OFF(B);
-      OFF(C);
-      OFF(D);
-      OFF(E);
-      OFF(F);
-      ON(G);
-      break;
-    }
+  for (int i = 0; i < numSegments; i++) {
+    pinMode(segmentPins[i], OUTPUT);
   }
 }
 
@@ -221,16 +136,14 @@ void Color(int color)
         } 
       break;
     }
-    
     case(verde):
     {
         for(int i =0; i<25; i++)
         {
-          anillo.setPixelColor(i,anillo.Color(124,252,0));
+          anillo.setPixelColor(i,anillo.Color(0,255,0));
           anillo.show();  //muestro el color en el led
         }
       break;
     }
-  
   }
 }
